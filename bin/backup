@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require "dotenv"
+require "draftrb"
+
+Dotenv.load
+
+client = Draftrb::Client.new(ENV["DRAFT_USER"], ENV["DRAFT_PASSWORD"])
+pp ENV
+
+filename = Time.now.strftime("%Y-%d-%m_%H-%M-%S.json")
+docs = []
+
+page = 1
+loop do
+  body = client.documents(page).body
+  break if body.empty?
+  docs.concat(body)
+  page += 1
+end
+
+File.write(filename, docs.to_json)
